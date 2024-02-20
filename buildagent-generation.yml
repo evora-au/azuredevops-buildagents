@@ -8,23 +8,37 @@ parameters:
   - windows2022
   - ubuntu2004
   - ubuntu2204
-- name: variable_group
+- name: runner_images_version
+  displayName: runner-images Version
+  type: string
+  default: release
+  values:
+  - alpha
+  - prerelease
+  - release
+- name: variable_group_name
   displayName: Variable Group
   type: string
-  default: BuildAgents
+  default: 'Image Generation Variables'
 - name: agent_pool
   displayName: Agent Pool
   type: string
-  default: CI Windows2019
+  default: 'Host Pool - Image'
+- name: update_type
+  displayName: 'Update vmss (VM Scale Set) or galleryvm (Gallery VM Image) ?'
+  type: string
+  default: galleryvm
+  values:
+  - galleryvm
+  - vmss
 
 trigger: none
 
-variables:
-  - group: ${{ parameters.variable_group }}
-
-jobs:
+stages:
 - template: buildagent-generation-template.yml
   parameters: 
     image_type: ${{ parameters.image_type }}
-    variable_group: ${{ parameters.variable_group }}
+    runner_images_version: ${{ parameters.runner_images_version }}
+    variable_group_name: ${{ parameters.variable_group_name }}
     agent_pool: ${{ parameters.agent_pool }}
+    update_type: ${{ parameters.update_type }}
